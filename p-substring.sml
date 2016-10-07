@@ -1,0 +1,79 @@
+open Sparcl
+
+
+fun resultShow (Done (r, t)) = print ((Substring.string r) ^ ", " ^ (Substring.string t) ^ "\n")
+  | resultShow Partial       = print "Partial\n"
+  | resultShow Fail          = print "Fail\n"
+
+
+fun compareResult (Done (r1, t1)) (Done (r2, t2)) = Substring.compare(r1, r2) = EQUAL andalso Substring.compare(t1, t2) = EQUAL
+  | compareResult Partial         Partial         = true
+  | compareResult Fail            Fail            = true
+  | compareResult _               _               = false
+
+
+fun testResult r expected name =
+  if compareResult r expected
+  then print ("OK - " ^ name ^ "\n" )
+  else print ("Not OK - " ^ name ^ "\n" )
+
+
+
+val sfull = Substring.full
+val sf = Substring.full (* Используется другое имя, чтобы можно было различать, что для Substring версии сделано *)
+
+
+
+
+val foo = (
+    bind
+        (apR (takeStr "$") (takeInt ()) )
+        (fn n =>
+            (apR (takeStr "\r\n")
+                (apL (takeN n) (takeStr "\r\n"))
+            )
+        )
+    )
+
+val foo_infix =
+        takeStr "$" *> takeInt ()
+        >>=
+        (fn n => takeStr "\r\n" *> takeN n <* takeStr "\r\n")
+
+
+fun sample () = (
+
+  testResult
+    ((takeStr "INFO") (sfull "INFOTAIL"))
+    (Done ((sf "INFO"), sfull "TAIL"))
+    "takeStr" ;
+
+  testResult ( takeStr    "INFO" (sfull "INFOTAIL") ) (Done ((sf "INFO"), sfull "TAIL")) "takeStr" ;
+  testResult ( takeBefore "TAIL" (sfull "INFOTAIL") ) (Done ((sf "INFO"), sfull "TAIL")) "takeBefore" ;
+
+  testResult ( foo       (sfull "$4\r\nINFO\r\nTAIL") ) (Done ((sf "INFO"), sfull "TAIL")) "foo" ;
+
+  testResult ( foo_infix (sfull "$4\r\nINFO\r\nTAIL") ) (Done ((sf "INFO"), sfull "TAIL")) "foo_infix" ;
+
+  testResult ( choice [(takeStr "PING"), (takeStr "INFO")] (sfull "INFOTAIL") ) (Done ((sf "INFO"), sfull "TAIL")) "choice" ;
+  ()
+)
+
+
+
+fun runIt f s 0 = print "Run Done\n"
+  | runIt f s n = (f s; runIt f s (n-1) )
+  (* | runIt f s n = (case f s of Done (ss, _) => Substring.string ss | _ => "" ;  runIt f s (n-1) ) *)
+
+fun benckmark () = (
+    print "Run Benckmark...\n";
+    let val s = sfull "$4\r\nINFO\r\nTAIL" in
+    runIt foo s 10000000
+    end
+  )
+
+
+fun main () = (
+    sample ();
+    benckmark ()
+  )
