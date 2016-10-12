@@ -85,11 +85,13 @@ structure Sparcl : SPARCL = struct
           let 
             val sd_l = Substring.size sd
             val tail = Substring.triml sd_l ss
-            val d = valOf (Int.fromString (Substring.string sd))
+            val d = Int.fromString (Substring.string sd)
           in
             if Substring.isEmpty tail 
             then Partial
-            else Done (d, tail)
+            else case d of
+                     SOME d => Done (d, tail)
+                   | NOME   => Fail
           end
       end 
 
