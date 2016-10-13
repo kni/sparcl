@@ -26,5 +26,5 @@ runIt f s n = (f s) `seq` runIt f s (n-1)
 
 
 main = do
-	runIt (\s -> parse foo_infix s) (BS.pack "$4\r\nINFO\r\nTAIL") 10000000
-	BS.putStrLn "The End"
+    runIt (\s -> parse foo_infix s) (BS.pack "$4\r\nINFO\r\nTAIL") 10000000
+    BS.putStrLn "The End"
