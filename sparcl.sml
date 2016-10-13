@@ -64,9 +64,7 @@ structure Sparcl : SPARCL = struct
           val (h,t) = Substring.position s ss
         in
           if Substring.isEmpty t
-          then if Substring.size ss > s_l
-               then Partial
-               else Fail
+          then Partial
           else Done ((Substring.string h), t)
         end
     end
