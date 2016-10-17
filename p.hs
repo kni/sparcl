@@ -2,6 +2,8 @@
 
 module Main (main) where
 
+import Data.Time
+
 import Sparcl
 
 import Control.Applicative (Applicative(..), (<$>))
@@ -43,9 +45,15 @@ foo_infix =
         (\n -> takeStr "\r\n" *> takeN n <* takeStr "\r\n")
 
 
-runIt f s 0 = BS.putStrLn "Run Done"
-runIt f s n = (f s) `seq` runIt f s (n-1)
--- runIt f s n = let !x = f s in runIt f s (n-1)
+runBench name n f s = do
+    t0 <- getCurrentTime
+    runIt f s n
+    t1 <- getCurrentTime
+    putStrLn $ name ++ " " ++ (show $ diffUTCTime t1 t0)
+    where
+    runIt f s 0 = return ()
+    runIt f s n = (f s) `seq` runIt f s (n-1)
+    -- runIt f s n = let !x = f s in runIt f s (n-1)
 
 
 main = do
@@ -57,4 +65,4 @@ main = do
     testResult (runParser (choice [(takeStr "PING"), (takeStr "INFO")]) "INFOTAIL") (Done "INFO" "TAIL") "choice"
 
     putStrLn "Run Benckmark..."
-    runIt (\s -> runParser foo_infix s) (BS.pack "$4\r\nINFO\r\nTAIL") 10000000
+    runBench "Benckmark Redis" 10000000 (\s -> runParser foo_infix s) (BS.pack "$4\r\nINFO\r\nTAIL")

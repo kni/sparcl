@@ -60,15 +60,24 @@ fun sample () = (
 )
 
 
+fun runBench name n f s =
+let
+  fun runIt f s 0 = ()
+    | runIt f s n = (f s; runIt f s (n-1) )
+    (* | runIt f s n = (case f s of Done (ss, _) => Substring.string ss | _ => "" ;  runIt f s (n-1) ) *)
 
-fun runIt f s 0 = print "Run Done\n"
-  | runIt f s n = (f s; runIt f s (n-1) )
-  (* | runIt f s n = (case f s of Done (ss, _) => Substring.string ss | _ => "" ;  runIt f s (n-1) ) *)
+  val t0 = Time.now ()
+  val _ = runIt f s n
+  val t1 = Time.now ()
+in
+  print (name ^ " " ^ Real.toString(Time.toReal(Time.-(t1, t0))) ^ "\n")
+end
+
 
 fun benckmark () = (
     print "Run Benckmark...\n";
     let val s = sfull "$4\r\nINFO\r\nTAIL" in
-    runIt foo s 10000000
+    runBench "Benckmark Redis" 10000000 foo s
     end
   )
 

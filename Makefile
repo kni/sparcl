@@ -15,7 +15,7 @@ p_substring_mlton: sparcl.sml main.sml p-substring.sml p-substring.mlb
 p_substring_poly: sparcl.sml p-substring.sml p-substring-poly.sml
 	polyc -o p_substring_poly p-substring-poly.sml
 
-p_atto_haskell: Sparcl.hs p.hs
+p_atto_haskell: p-atto.hs
 	ghc -O2 -o p_atto_haskell --make p-atto.hs
 
 clean:
