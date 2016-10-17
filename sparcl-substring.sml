@@ -21,6 +21,7 @@ signature SPARCL = sig
   val apL    : 'r1 Parser          -> 'r2 Parser          -> 'r1 Parser
   val ap     : ('r1 -> 'r2) Parser -> 'r1 Parser          -> 'r2 Parser
   val choice : 'r  Parser list     -> 'r  Parser
+  val many   : 'r Parser -> 'r list Parser
   
   val <$>    : ('r1 -> 'r2)    *  'r1 Parser          -> 'r2 Parser
   val >>=    : 'r1 Parser      *  ('r1 -> 'r2 Parser) -> 'r2 Parser
@@ -153,6 +154,15 @@ structure Sparcl : SPARCL = struct
             | Partial     => go ps true 
             | Fail        => go ps is_Partial 
     in go ps false end
+
+  fun many p ss =
+    case p ss of
+        Done (r, t) => ( case many p t of
+                            Done (rs, t) => Done (r::rs, t)
+                          | _            => Done (r::[], t)
+                       )
+      | Partial     => Partial
+      | Fail        => Fail
 
   fun f  <$> p  = fmap f p
   fun p  >>= pg = bind p pg

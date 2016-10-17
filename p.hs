@@ -45,6 +45,12 @@ foo_infix =
         (\n -> takeStr "\r\n" *> takeN n <* takeStr "\r\n")
 
 
+
+scanLine = takeInt >>= (\x -> takeStr "," *> takeInt >>= (\y -> takeStr "\n" *> pure (x, y) ) )
+scanList = many scanLine
+
+
+
 runBench name n f s = do
     t0 <- getCurrentTime
     runIt f s n
@@ -65,4 +71,7 @@ main = do
     testResult (runParser (choice [(takeStr "PING"), (takeStr "INFO")]) "INFOTAIL") (Done "INFO" "TAIL") "choice"
 
     putStrLn "Run Benckmark..."
+
     runBench "Benckmark Redis" 10000000 (\s -> runParser foo_infix s) (BS.pack "$4\r\nINFO\r\nTAIL")
+
+    runBench "Benckmark CSV  " 10000000 (\s -> runParser scanList s) (BS.pack "4,5\n2,3\n-")

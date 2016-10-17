@@ -1,8 +1,8 @@
-{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE OverloadedStrings, BangPatterns #-}
 
 module Sparcl (
     takeStr, takeBefore, takeInt, takeInteger, takeN,
-    choice,
+    choice, many,
     bind, apL, apR, ap,
     Result (..), Parser (..), parse
 ) where
@@ -112,6 +112,16 @@ choice ps = Parser $ \ ss ->
         go [] True  = Partial
         go [] False = Fail
     in go ps False
+
+
+many :: Parser t -> Parser [t]
+many p = Parser $ \ ss ->
+    case runParser p ss of
+        !(Done r t) -> case runParser (many p) t of
+                        Done rs t -> Done (r:rs) t
+                        _         -> Done (r:[]) t
+        Partial  -> Partial
+        Fail     -> Fail
 
 
 _pure :: a -> Parser a

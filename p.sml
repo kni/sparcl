@@ -39,6 +39,20 @@ val foo_infix =
         (fn n => takeStr "\r\n" *> takeN n <* takeStr "\r\n")
 
 
+val scanLine = (takeInt ()) >>= (fn x => (takeStr ",") *> (takeInt ()) >>= (fn y => (takeStr "\n") *> pure (x, y) ) )
+val scanList = many scanLine
+
+(*
+val r = scanList (sfull "4,5\n2,3\n-")
+
+fun showListPair []         = ()
+  | showListPair ((x,y)::t) = ( print ((Int.toString x) ^ " " ^ (Int.toString y) ^ "\n") ; showListPair t )
+
+val _ = case r of Fail => print "Fail\n" | Partial => print "Partial\n" |
+  Done (l, t) => ( print "Done\n"; showListPair l; print ("TAIL: " ^ (Substring.string t) ^ "\n") )
+*)
+
+
 fun sample () = (
   testResult
     ((takeStr "INFO") (sfull "INFOTAIL"))
@@ -73,9 +87,8 @@ end
 
 fun benckmark () = (
     print "Run Benckmark...\n";
-    let val s = sfull "$4\r\nINFO\r\nTAIL" in
-    runBench "Benckmark Redis" 10000000 foo s
-    end
+    runBench "Benckmark Redis" 10000000 foo_infix (sfull "$4\r\nINFO\r\nTAIL");
+    runBench "Benckmark CSV  " 10000000 scanList (sfull "4,5\n2,3\n-")
   )
 
 

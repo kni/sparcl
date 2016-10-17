@@ -21,6 +21,9 @@ foo_infix =
         >>=
         (\n -> endOfLine *>take (fromIntegral n) <* endOfLine)
 
+scanLine = signed decimal >>= (\x -> char ',' *> signed decimal >>= (\y -> endOfLine *> pure (x, y) ) )
+scanList = many' scanLine
+
 
 runBench name n f s = do
     t0 <- getCurrentTime
@@ -35,4 +38,5 @@ runBench name n f s = do
 
 main = do
     runBench "Benckmark Redis" 10000000 (\s -> parse foo_infix s) (BS.pack "$4\r\nINFO\r\nTAIL")
+    runBench "Benckmark CSV  " 10000000 (\s -> parse scanList s) (BS.pack "4,5\n2,3\n-")
     BS.putStrLn "The End"
