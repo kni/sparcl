@@ -25,7 +25,7 @@ val sfull = Substring.full
 
 val foo = (
     bind
-        (apR (takeStr "$") (takeInt ()) )
+        (apR (takeStr "$") takeInt )
         (fn n =>
             (apR (takeStr "\r\n")
                 (apL (takeN n) (takeStr "\r\n"))
@@ -34,12 +34,12 @@ val foo = (
     )
 
 val foo_infix =
-        takeStr "$" *> takeInt ()
+        takeStr "$" *> takeInt
         >>=
         (fn n => takeStr "\r\n" *> takeN n <* takeStr "\r\n")
 
 
-val scanLine = (takeInt ()) >>= (fn x => (takeStr ",") *> (takeInt ()) >>= (fn y => (takeStr "\n") *> pure (x, y) ) )
+val scanLine = takeInt >>= (fn x => (takeStr ",") *> takeInt >>= (fn y => (takeStr "\n") *> pure (x, y) ) )
 val scanList = many scanLine
 
 (*

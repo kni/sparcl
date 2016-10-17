@@ -11,7 +11,7 @@ signature SPARCL = sig
 
   val takeStr    : string -> substring Parser
   val takeBefore : string -> substring Parser
-  val takeInt    : unit   -> int    Parser
+  val takeInt    :                 int Parser
   val takeN      : int    -> substring Parser
 
   val pure   : 'r -> 'r Parser
@@ -71,7 +71,7 @@ structure Sparcl : SPARCL = struct
         end
     end
 
-  fun takeInt () = fn ss =>
+  val takeInt = fn ss =>
     if Substring.isEmpty ss
     then Partial
     else
