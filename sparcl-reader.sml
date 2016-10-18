@@ -17,7 +17,7 @@ signature SPARCL = sig
   val takeTail   : (string, 'cs) Parser
 
   val pure   : 'a -> ('a, 'cs) Parser
-  val fmap   : ('cs -> 'a) -> ('cs, 'cs) Parser -> ('a, 'cs) Parser
+  val fmap   : ('a -> 'b) -> ('a, 'cs) Parser -> ('b, 'cs) Parser
   val bind   : ('a, 'cs) Parser -> ('a -> ('b, 'cs) Parser) -> ('b, 'cs) Parser
   val apR    : ('a, 'cs) Parser -> ('b, 'cs) Parser -> ('b, 'cs) Parser
   val apL    : ('a, 'cs) Parser -> ('b, 'cs) Parser -> ('a, 'cs) Parser
@@ -25,7 +25,7 @@ signature SPARCL = sig
   val choice : ('a, 'cs) Parser list -> ('a, 'cs) Parser
   val many   : ('a, 'cs) Parser -> ('a list, 'cs) Parser
 
-  val <$> : ('cs -> 'a) * ('cs, 'cs) Parser -> ('a, 'cs) Parser
+  val <$> : ('a -> 'b) * ('a, 'cs) Parser -> ('b, 'cs) Parser
   val >>= : ('a, 'cs) Parser * ('a -> ('b, 'cs) Parser) -> ('b, 'cs) Parser
   val  *> : ('a, 'cs) Parser * ('b, 'cs) Parser -> ('b, 'cs) Parser
   val <*  : ('a, 'cs) Parser * ('b, 'cs) Parser -> ('a, 'cs) Parser
