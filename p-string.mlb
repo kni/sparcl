@@ -1,4 +1,4 @@
 $(SML_LIB)/basis/basis.mlb
-sparcl.sml
-p.sml
+sparcl-string.sml
+p-string.sml
 main.sml
