@@ -1,22 +1,41 @@
 sparcl - Small Parser Combinator Library for Standard ML (MLton, Poly/ML), Haskell and Perl
 
 
-Haskell:
+Haskell
+=======
 
-   data Result r = Done r ByteString | Partial | Fail
-newtype Parser r = Parser { runParser :: ByteString -> Result r }
+    data Result r = Done r ByteString | Partial | Fail
+ newtype Parser r = Parser { runParser :: ByteString -> Result r }
 
-Standard ML:
+Three version for Standard ML
+=============================
 
-datatype 'r Result = Done of 'r * substring | Partial | Fail
-    type 'r Parser = substring -> 'r Result
+sparcl-string.sml and sparcl-substring.sml
+------------------------------------------
+
+ datatype 'r Result = Done of 'r * substring | Partial | Fail
+     type 'r Parser = substring -> 'r Result
 
 
-There are two version for Standard ML:
-1) sparcl.sml           : string ->    string Parser
-2) sparcl-substring.sml : string -> substring Parser
+ sparcl-string.sml    : string ->    string Parser
+ sparcl-substring.sml : string -> substring Parser
 
-"substring" version is fastest.
 By the way, Haskell ByteString is substring.
 
-For example see p.{sml,hs,pl} files.
+
+sparcl-reader.sml
+-----------------
+
+ datatype ('r, 'cs) Result = Done of 'r * 'cs | Partial | Fail
+     type ('r, 'cs) Parser = (char, 'cs) StringCvt.reader -> 'cs -> ('r, 'cs) Result
+
+Example
+=======
+
+For example see p* files.
+
+
+Combinators Library for standard scanners
+=========================================
+
+If you are looking for Combinators Library for standard scanners, see Scancom (https://github.com/kni/scancom)

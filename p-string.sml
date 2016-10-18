@@ -67,28 +67,29 @@ fun sample () = (
   testResult ( foo_infix (sfull "$4\r\nINFO\r\nTAIL") ) (Done ("INFO", sfull "TAIL")) "foo_infix" ;
 
   testResult ( choice [(takeStr "PING"), (takeStr "INFO")] (sfull "INFOTAIL") ) (Done ("INFO", sfull "TAIL")) "choice" ;
-
   ()
 )
 
 
 fun runBench name n f s =
 let
-  fun runIt f s 0 = ()
-    | runIt f s n = (f s; runIt f s (n-1) )
+  fun runIt f 0 = ()
+    | runIt f n = (f s; runIt f (n-1) )
 
   val t0 = Time.now ()
-  val _ = runIt f s n
+  val _ = runIt f n
   val t1 = Time.now ()
 in
   print (name ^ " " ^ Real.toString(Time.toReal(Time.-(t1, t0))) ^ "\n")
 end
 
 
+val N = 10000000
+
 fun benckmark () = (
     print "Run Benckmark...\n";
-    runBench "Benckmark Redis" 10000000 foo_infix (sfull "$4\r\nINFO\r\nTAIL");
-    runBench "Benckmark CSV  " 10000000 scanList (sfull "4,5\n2,3\n-")
+    runBench "Benckmark Redis" N foo_infix (sfull "$4\r\nINFO\r\nTAIL");
+    runBench "Benckmark CSV  " N scanList  (sfull "4,5\n2,3\n-")
   )
 
 

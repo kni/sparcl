@@ -1,4 +1,4 @@
-all: p_string_poly p_string_mlton p_substring_poly p_substring_mlton p_haskell p_atto_haskell
+all: p_string_poly p_string_mlton p_substring_poly p_substring_mlton p_reader_poly p_reader_mlton p_haskell p_atto_haskell
 
 p_string_poly: sparcl-string.sml p-string.sml p-string-poly.sml
 	polyc -o p_string_poly p-string-poly.sml
@@ -12,6 +12,12 @@ p_substring_poly: sparcl-substring.sml p-substring.sml p-substring-poly.sml
 p_substring_mlton: sparcl-substring.sml main.sml p-substring.sml p-substring.mlb
 	mlton -output p_substring_mlton p-substring.mlb
 
+p_reader_poly: sparcl-reader.sml p-reader.sml p-reader-poly.sml
+	polyc -o p_reader_poly p-reader-poly.sml
+
+p_reader_mlton: sparcl-reader.sml p-reader.sml main.sml p-reader.mlb
+	mlton -output p_reader_mlton p-reader.mlb
+
 p_haskell: Sparcl.hs p.hs
 	ghc -O2 -o p_haskell --make p.hs
 
@@ -22,4 +28,4 @@ clean:
 	rm -rf *.o *.hi
 
 realclean: clean
-	rm -rf p_string_poly p_string_mlton p_substring_poly p_substring_mlton p_haskell p_atto_haskell
+	rm -rf p_string_poly p_string_mlton p_substring_poly p_substring_mlton p_reader_poly p_reader_mlton p_haskell p_atto_haskell
