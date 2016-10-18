@@ -53,13 +53,13 @@ scanList = many scanLine
 
 runBench name n f s = do
     t0 <- getCurrentTime
-    runIt f s n
+    s `seq` runIt f n
     t1 <- getCurrentTime
     putStrLn $ name ++ " " ++ (show $ diffUTCTime t1 t0)
     where
-    runIt f s 0 = return ()
-    runIt f s n = (f s) `seq` runIt f s (n-1)
-    -- runIt f s n = let !x = f s in runIt f s (n-1)
+    runIt f 0 = return ()
+    runIt f n = (f s) `seq` runIt f (n-1)
+    -- runIt f n = let !x = f s in runIt f (n-1)
 
 
 main = do
@@ -70,8 +70,7 @@ main = do
     testResult (runParser foo_infix "$4\r\nINFO\r\nTAIL") (Done "INFO" "TAIL") "foo_infix"
     testResult (runParser (choice [(takeStr "PING"), (takeStr "INFO")]) "INFOTAIL") (Done "INFO" "TAIL") "choice"
 
+    let n = 10000000
     putStrLn "Run Benckmark..."
-
-    runBench "Benckmark Redis" 10000000 (\s -> runParser foo_infix s) (BS.pack "$4\r\nINFO\r\nTAIL")
-
-    runBench "Benckmark CSV  " 10000000 (\s -> runParser scanList s) (BS.pack "4,5\n2,3\n-")
+    runBench "Benckmark Redis" n (runParser foo_infix) (BS.pack "$4\r\nINFO\r\nTAIL")
+    runBench "Benckmark CSV  " n (runParser scanList)  (BS.pack "4,5\n2,3\n-")
