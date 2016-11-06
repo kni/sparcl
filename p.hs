@@ -67,10 +67,11 @@ main = do
     testResult (runParser (takeBefore "TAIL") "INFOTAIL") (Done "INFO" "TAIL") "takeBefore"
 
     testResult (runParser foo "$4\r\nINFO\r\nTAIL") (Done "INFO" "TAIL") "foo"
+    testResult (runParser foo "$0\r\n\r\nTAIL") (Done "" "TAIL") "foo 0"
     testResult (runParser foo_infix "$4\r\nINFO\r\nTAIL") (Done "INFO" "TAIL") "foo_infix"
     testResult (runParser (choice [(takeStr "PING"), (takeStr "INFO")]) "INFOTAIL") (Done "INFO" "TAIL") "choice"
 
-    let n = 10000000
-    putStrLn "Run Benckmark..."
-    runBench "Benckmark Redis" n (runParser foo_infix) (BS.pack "$4\r\nINFO\r\nTAIL")
-    runBench "Benckmark CSV  " n (runParser scanList)  (BS.pack "4,5\n2,3\n-")
+    -- let n = 10000000
+    -- putStrLn "Run Benckmark..."
+    -- runBench "Benckmark Redis" n (runParser foo_infix) (BS.pack "$4\r\nINFO\r\nTAIL")
+    -- runBench "Benckmark CSV  " n (runParser scanList)  (BS.pack "4,5\n2,3\n-")

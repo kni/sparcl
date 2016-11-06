@@ -57,16 +57,17 @@ fun sample () = (
   testResult
     ((takeStr "INFO") (sfull "INFOTAIL"))
     (Done ("INFO", sfull "TAIL"))
-    "takeStr" ;
+    "takeStr";
 
-  testResult ( takeStr    "INFO" (sfull "INFOTAIL") ) (Done ("INFO", sfull "TAIL")) "takeStr" ;
-  testResult ( takeBefore "TAIL" (sfull "INFOTAIL") ) (Done ("INFO", sfull "TAIL")) "takeBefore" ;
+  testResult ( takeStr    "INFO" (sfull "INFOTAIL") ) (Done ("INFO", sfull "TAIL")) "takeStr";
+  testResult ( takeBefore "TAIL" (sfull "INFOTAIL") ) (Done ("INFO", sfull "TAIL")) "takeBefore";
 
-  testResult ( foo       (sfull "$4\r\nINFO\r\nTAIL") ) (Done ("INFO", sfull "TAIL")) "foo" ;
+  testResult ( foo       (sfull "$4\r\nINFO\r\nTAIL") ) (Done ("INFO", sfull "TAIL")) "foo";
+  testResult ( foo       (sfull "$0\r\n\r\nTAIL") ) (Done ("", sfull "TAIL")) "foo 0";
 
-  testResult ( foo_infix (sfull "$4\r\nINFO\r\nTAIL") ) (Done ("INFO", sfull "TAIL")) "foo_infix" ;
+  testResult ( foo_infix (sfull "$4\r\nINFO\r\nTAIL") ) (Done ("INFO", sfull "TAIL")) "foo_infix";
 
-  testResult ( choice [(takeStr "PING"), (takeStr "INFO")] (sfull "INFOTAIL") ) (Done ("INFO", sfull "TAIL")) "choice" ;
+  testResult ( choice [(takeStr "PING"), (takeStr "INFO")] (sfull "INFOTAIL") ) (Done ("INFO", sfull "TAIL")) "choice";
   ()
 )
 
@@ -94,6 +95,6 @@ fun benckmark () = (
 
 
 fun main () = (
-    sample ();
-    benckmark ()
+    sample ()
+    (* ; benckmark () *)
   )

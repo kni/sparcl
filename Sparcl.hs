@@ -53,8 +53,8 @@ takeInteger = Parser $ \ ss -> case BS.readInteger ss of
 
 takeN :: Int -> Parser ByteString
 takeN s_l = Parser $ \ ss ->
-    let (sss, tail) = BS.splitAt s_l ss
-    in
+    if s_l == 0 then Done "" ss else
+    let (sss, tail) = BS.splitAt s_l ss in
     if sss == BS.empty
     then Partial
     else Done sss tail
